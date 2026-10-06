@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS25C01: Programming in C - Learning Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'Fira Code', monospace; }
+        /* Custom scrollbar for code editor & terminal */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 h-full flex flex-col md:flex-row overflow-hidden">
+
+    <aside class="w-full md:w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between shrink-0 z-20">
+        <div>
+            <!-- App Logo / Title -->
+            <div class="p-5 border-b border-slate-800/80 flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-code text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base tracking-tight text-white">CS25C01 Portal</h1>
+                    <span class="text-xs text-indigo-400 font-medium">Programming in C</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/20">
+                    <i class="fa-solid fa-house w-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('modules')" id="nav-modules" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i class="fa-solid fa-book-open w-5"></i>
+                    <span>Course Modules</span>
+                </button>
+                <button onclick="switchTab('playground')" id="nav-playground" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i class="fa-solid fa-terminal w-5"></i>
+                    <span>C Playground</span>
+                </button>
+                <button onclick="switchTab('labs')" id="nav-labs" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i class="fa-solid fa-laptop-code w-5"></i>
+                    <span>Lab Assignments</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i class="fa-solid fa-list-check w-5"></i>
+                    <span>Assessments & Quiz</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Student Profile Footer in Sidebar -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-900/50">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center font-bold text-white shadow">
+                    <span class="m-auto">JS</span>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-semibold text-slate-200 truncate">John Scholar</p>
+                    <p class="text-xs text-slate-400 truncate">Roll: CS25C01-104</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-900">
+        <!-- Top Header Bar -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 flex items-center justify-between shrink-0 z-10">
+            <div class="flex items-center space-x-4">
+                <h2 id="header-title" class="text-lg font-bold text-white tracking-wide">Dashboard Overview</h2>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex items-center space-x-2 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700/50 text-xs text-slate-300">
+                    <i class="fa-regular fa-calendar text-indigo-400"></i>
+                    <span>Semester: Spring 2026</span>
+                </div>
+                <button onclick="showNotification('System status: All services operational. GCC compiler sandbox active.')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-xl transition border border-slate-700">
+                    <i class="fa-solid fa-bell text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Container -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="space-y-6 max-w-7xl mx-auto">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-indigo-900/50 via-slate-800 to-slate-900 rounded-2xl p-6 md:p-8 border border-indigo-500/20 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 text-indigo-500/10 text-9xl pointer-events-none">
+                        <i class="fa-solid fa-c"></i>
+                    </div>
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="bg-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-500/30">CS25C01 CORE COURSE</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mt-3">Welcome back, John!</h2>
+                        <p class="text-slate-300 text-sm mt-2 leading-relaxed">Continue your journey into low-level memory management, pointers, structures, and advanced C syntax. Your next lab deadline is approaching.</p>
+                        <div class="mt-5 flex flex-wrap gap-3">
+                            <button onclick="switchTab('modules')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition shadow-lg shadow-indigo-600/30 flex items-center space-x-2">
+                                <span>Resume Learning</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
+                            <button onclick="switchTab('playground')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-5 py-2.5 rounded-xl font-medium text-sm transition border border-slate-700 flex items-center space-x-2">
+                                <i class="fa-solid fa-terminal text-indigo-400"></i>
+                                <span>Open C Playground</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">Course Progress</span>
+                            <div class="bg-emerald-500/10 text-emerald-400 p-2 rounded-xl">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline justify-between">
+                            <h3 class="text-2xl font-bold text-white">68%</h3>
+                            <span class="text-xs text-emerald-400 font-semibold">+12% this week</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">Completed Modules</span>
+                            <div class="bg-indigo-500/10 text-indigo-400 p-2 rounded-xl">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline justify-between">
+                            <h3 class="text-2xl font-bold text-white">4 / 7</h3>
+                            <span class="text-xs text-indigo-400 font-semibold">3 remaining</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-indigo-500 h-full rounded-full" style="width: 57%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">Quiz Score Avg</span>
+                            <div class="bg-amber-500/10 text-amber-400 p-2 rounded-xl">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline justify-between">
+                            <h3 class="text-2xl font-bold text-white">92.5%</h3>
+                            <span class="text-xs text-amber-400 font-semibold">Distinction</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: 92.5%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">Lab Submissions</span>
+                            <div class="bg-purple-500/10 text-purple-400 p-2 rounded-xl">
+                                <i class="fa-solid fa-code-commit"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline justify-between">
+                            <h3 class="text-2xl font-bold text-white">12 / 14</h3>
+                            <span class="text-xs text-purple-400 font-semibold">All passing</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-purple-500 h-full rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Modules Preview -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-white text-base">Course Curriculum Roadmap</h3>
+                            <button onclick="switchTab('modules')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">View All Modules</button>
+                        </div>
+                        <div class="space-y-3">
+                            <div onclick="switchTab('modules'); selectModule(0);" class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 hover:border-indigo-500/50 transition cursor-pointer flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-sm text-white">Module 1: C Syntax & Control Structures</h4>
+                                        <p class="text-xs text-slate-400 mt-0.5">Variables, Data Types, If-Else, Loops, Switch Statements</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">Completed</span>
+                            </div>
+
+                            <div onclick="switchTab('modules'); selectModule(1);" class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 hover:border-indigo-500/50 transition cursor-pointer flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-sm text-white">Module 2: Arrays & Functions</h4>
+                                        <p class="text-xs text-slate-400 mt-0.5">1D/2D Arrays, Passing Arrays to Functions, Scope, Recursion</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">Completed</span>
+                            </div>
+
+                            <div onclick="switchTab('modules'); selectModule(2);" class="p-4 rounded-xl bg-indigo-950/40 border border-indigo-500/50 transition cursor-pointer flex items-center justify-between shadow-lg shadow-indigo-900/20">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-play"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-sm text-white">Module 3: Pointers & Memory Management</h4>
+                                        <p class="text-xs text-slate-300 mt-0.5">Pointer Arithmetic, Address Operator, `malloc`, `calloc`, `free`</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium animate-pulse">In Progress</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Lab Reminder Card -->
+                    <div class="bg-gradient-to-br from-indigo-950/60 via-slate-800/80 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Active Lab Assignment</span>
+                                <span class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded border border-amber-500/30">Due in 2 days</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base">Lab #4: Dynamic Matrix Multiplier</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed">Write a C program using dynamic memory allocation (`malloc`) to multiply two matrices of arbitrary size entered by the user.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between">
+                            <span class="text-xs text-slate-400">Weight: 15% of Grade</span>
+                            <button onclick="switchTab('labs')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-xl font-medium transition shadow">Open Labs</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: COURSE MODULES -->
+            <section id="tab-modules" class="hidden h-full flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
+                <!-- Module Navigation Sidebar -->
+                <div class="w-full lg:w-80 bg-slate-800/50 border border-slate-700/60 rounded-2xl p-4 flex flex-col shrink-0">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider px-2 mb-3">Syllabus Chapters</h3>
+                    <div id="module-list" class="space-y-1.5 overflow-y-auto max-h-[calc(100vh-16rem)]">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Module Content Viewer -->
+                <div class="flex-1 bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8 overflow-y-auto flex flex-col">
+                    <div id="module-content-container" class="space-y-6">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: C PLAYGROUND -->
+            <section id="tab-playground" class="hidden h-full flex flex-col max-w-7xl mx-auto space-y-4">
+                <div class="flex flex-wrap items-center justify-between bg-slate-800/60 p-4 rounded-2xl border border-slate-700/60 gap-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-indigo-600/20 text-indigo-400 px-3 py-1.5 rounded-xl border border-indigo-500/30 text-xs font-semibold">
+                            <i class="fa-solid fa-microchip mr-1.5"></i> GCC 12.2 Sandbox
+                        </div>
+                        <select id="code-snippet-select" onchange="loadPresetSnippet(this.value)" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500">
+                            <option value="hello">1. Hello World</option>
+                            <option value="pointers">2. Pointer Fundamentals</option>
+                            <option value="malloc">3. Dynamic Memory (malloc)</option>
+                            <option value="structs">4. Student Records (Structs)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="resetCode()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl text-xs font-medium transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Reset</span>
+                        </button>
+                        <button onclick="runCCompiler()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-xs font-semibold transition shadow-lg shadow-emerald-600/30 flex items-center space-x-2">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Run Code</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Editor and Terminal Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-[450px]">
+                    <!-- Code Editor -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-inner">
+                        <div class="bg-slate-900 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+                            <span class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+                                <span class="ml-2 text-slate-300">main.c</span>
+                            </span>
+                            <span>UTF-8</span>
+                        </div>
+                        <div class="flex-1 relative">
+                            <textarea id="code-editor" class="w-full h-full bg-slate-950 text-slate-200 code-font p-4 text-sm resize-none focus:outline-none leading-relaxed" spellcheck="false"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Terminal Output -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-inner">
+                        <div class="bg-slate-900 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+                            <span class="flex items-center space-x-2">
+                                <i class="fa-solid fa-terminal text-emerald-400"></i>
+                                <span class="text-slate-300">Terminal Output / Compilation</span>
+                            </span>
+                            <button onclick="clearTerminal()" class="hover:text-white transition">Clear</button>
+                        </div>
+                        <div id="terminal-output" class="flex-1 bg-slate-950 text-emerald-400 code-font p-4 text-xs overflow-y-auto whitespace-pre-wrap leading-relaxed">
+Welcome to CS25C01 GCC Sandbox.
+Click 'Run Code' to compile and execute your C program.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: LAB ASSIGNMENTS -->
+            <section id="tab-labs" class="hidden max-w-5xl mx-auto space-y-6">
+                <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-700/60 gap-4">
+                        <div>
+                            <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Practical Labs & Submissions</span>
+                            <h3 class="text-xl font-bold text-white mt-1">CS25C01 Programming Lab Portal</h3>
+                        </div>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-4 py-2 rounded-xl border border-indigo-500/30 text-xs font-semibold">
+                            Total Completed: <span id="lab-completed-count">12</span> / 14 Labs
+                        </div>
+                    </div>
+
+                    <!-- Lab List Grid -->
+                    <div id="lab-list-container" class="space-y-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: QUIZ & ASSESSMENTS -->
+            <section id="tab-quiz" class="hidden max-w-4xl mx-auto space-y-6">
+                <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8">
+                    <div class="flex items-center justify-between pb-6 border-b border-slate-700/60">
+                        <div>
+                            <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Chapter Assessment</span>
+                            <h3 class="text-xl font-bold text-white mt-1">CS25C01 Midterm Practice Quiz</h3>
+                        </div>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-4 py-2 rounded-xl border border-indigo-500/30 text-sm font-semibold">
+                            Question <span id="current-q-num">1</span> of <span id="total-q-num">5</span>
+                        </div>
+                    </div>
+
+                    <div id="quiz-container" class="py-6 space-y-6">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <div id="quiz-controls" class="pt-6 border-t border-slate-700/60 flex items-center justify-between">
+                        <button onclick="prevQuestion()" id="prev-btn" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-5 py-2.5 rounded-xl text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed">Previous</button>
+                        <button onclick="nextQuestion()" id="next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition shadow-lg shadow-indigo-600/30">Next Question</button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="fixed bottom-5 right-5 bg-slate-800 border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 transform translate-y-24 opacity-0 transition-all duration-300 flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Notification message</span>
+    </div>
+
+    <script>
+        // Course Modules Data
+        const modulesData = [
+            {
+                title: "1. C Syntax & Control Structures",
+                badge: "Completed",
+                badgeColor: "emerald",
+                summary: "Introduction to C compilation pipeline, primitive data types, operators, conditional branching (if, switch), and iteration loops (for, while, do-while).",
+                content: `
+                    <h3 class="text-xl font-bold text-white">Module 1: C Syntax & Control Structures</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">C is a powerful general-purpose programming language developed by Dennis Ritchie at Bell Labs. It forms the bedrock of modern operating systems, embedded systems, and high-performance compilers.</p>
+                    
+                    <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono text-indigo-400">example_syntax.c</span>
+                            <button onclick="copyCodeSnippet('snippet-1')" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-regular fa-copy mr-1"></i> Copy Code</button>
+                        </div>
+                        <pre id="snippet-1" class="code-font text-xs text-slate-200 overflow-x-auto p-3 bg-slate-950 rounded-lg">
+#include &lt;stdio.h&gt;
+
+int main() {
+    int score = 85;
+    if (score >= 90) {
+        printf("Grade: A\\n");
+    } else if (score >= 75) {
+        printf("Grade: B\\n");
+    } else {
+        printf("Grade: C\\n");
+    }
+    return 0;
+}</pre>
+                    </div>
+
+                    <h4 class="font-bold text-white text-base mt-4">Key Takeaways</h4>
+                    <ul class="list-disc list-inside text-slate-300 text-sm space-y-1.5">
+                        <li>Every C program execution begins at the <code>main()</code> function.</li>
+                        <li>Variables must be explicitly declared with data types (`int`, `float`, `char`, `double`) before use.</li>
+                        <li>Control statements like <code>if-else</code> and <code>switch-case</code> manage execution flow.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "2. Arrays & Functions",
+                badge: "Completed",
+                badgeColor: "emerald",
+                summary: "Mastering single and multi-dimensional arrays, passing arrays and variables by value vs reference, function prototypes, and recursion.",
+                content: `
+                    <h3 class="text-xl font-bold text-white">Module 2: Arrays & Functions</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">Arrays store multiple items of the same data type sequentially in contiguous memory blocks. Functions enable modular programming and code reuse.</p>
+                    
+                    <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono text-indigo-400">array_sum.c</span>
+                            <button onclick="copyCodeSnippet('snippet-2')" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-regular fa-copy mr-1"></i> Copy Code</button>
+                        </div>
+                        <pre id="snippet-2" class="code-font text-xs text-slate-200 overflow-x-auto p-3 bg-slate-950 rounded-lg">
+#include &lt;stdio.h&gt;
+
+int calculateSum(int arr[], int size) {
+    int sum = 0;
+    for(int i = 0; i &lt; size; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+int main() {
+    int marks[] = {88, 92, 79, 95, 90};
+    int total = calculateSum(marks, 5);
+    printf("Total Marks: %d\\n", total);
+    return 0;
+}</pre>
+                    </div>
+                `
+            },
+            {
+                title: "3. Pointers & Memory Management",
+                badge: "In Progress",
+                badgeColor: "indigo",
+                summary: "Deep dive into memory addresses, pointer arithmetic, dereferencing, dynamic memory allocation (`malloc`, `calloc`, `realloc`, `free`), and avoiding memory leaks.",
+                content: `
+                    <h3 class="text-xl font-bold text-white">Module 3: Pointers & Memory Management</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">A pointer is a variable whose value is the address of another variable. Understanding pointers is essential for mastering C.</p>
+                    
+                    <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono text-indigo-400">pointer_demo.c</span>
+                            <button onclick="copyCodeSnippet('snippet-3')" class="text-xs text-slate-400 hover:text-white transition"><i class="fa-regular fa-copy mr-1"></i> Copy Code</button>
+                        </div>
+                        <pre id="snippet-3" class="code-font text-xs text-slate-200 overflow-x-auto p-3 bg-slate-950 rounded-lg">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    int *ptr;
+    int n = 5;
+    
+    // Dynamic memory allocation
+    ptr = (int*) malloc(n * sizeof(int));
+    if (ptr == NULL) {
+        printf("Memory allocation failed!\\n");
+        return 1;
+    }
+    
+    for(int i = 0; i &lt; n; i++) {
+        ptr[i] = (i + 1) * 10;
+        printf("ptr[%d] = %d (Address: %p)\\n", i, ptr[i], (void*)&ptr[i]);
+    }
+    
+    free(ptr); // Prevent memory leaks
+    return 0;
+}</pre>
+                    </div>
+                `
+            },
+            {
+                title: "4. Structures & Unions",
+                badge: "Locked",
+                badgeColor: "slate",
+                summary: "Grouping heterogeneous data items using `struct` and `union`, nested structures, pointers to structures, and passing structs to functions.",
+                content: `
+                    <h3 class="text-xl font-bold text-white">Module 4: Structures & Unions</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">Structures allow combining variables of different data types under a single name, useful for records like student profiles, inventory items, and database tuples.</p>
+                `
+            },
+            {
+                title: "5. File Handling & I/O",
+                badge: "Locked",
+                badgeColor: "slate",
+                summary: "Opening, reading, writing, and closing files using `fopen`, `fprintf`, `fscanf`, `fread`, `fwrite`, and binary file manipulation.",
+                content: `
+                    <h3 class="text-xl font-bold text-white">Module 5: File Handling & I/O</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">C provides comprehensive stream-based file handling functions to persist data onto secondary storage media.</p>
+                `
+            }
+        ];
+
+        // Lab Assignments Data
+        const labsData = [
+            {
+                id: 1,
+                title: "Lab #1: Temperature Conversion & Arithmetic",
+                dueDate: "Completed",
+                status: "Passed (100/100)",
+                description: "Write a C program to convert Fahrenheit to Celsius and compute basic arithmetic operations with formatting.",
+                completed: true
+            },
+            {
+                id: 2,
+                title: "Lab #2: Prime Number Generator & Loops",
+                dueDate: "Completed",
+                status: "Passed (95/100)",
+                description: "Implement nested loops to find and print all prime numbers between two user-entered boundaries.",
+                completed: true
+            },
+            {
+                id: 3,
+                title: "Lab #3: Array Sorting & Searching",
+                dueDate: "Completed",
+                status: "Passed (90/100)",
+                description: "Write functions to implement Bubble Sort and Binary Search on an integer array of size N.",
+                completed: true
+            },
+            {
+                id: 4,
+                title: "Lab #4: Dynamic Matrix Multiplier",
+                dueDate: "Due in 2 days",
+                status: "Pending Submission",
+                description: "Write a C program using dynamic memory allocation (`malloc`) to multiply two matrices of arbitrary size entered by the user.",
+                completed: false
+            },
+            {
+                id: 5,
+                title: "Lab #5: Student Database using Structs & Files",
+                dueDate: "Due in 9 days",
+                status: "Pending Submission",
+                description: "Create a CLI application to record, persist to disk, and query student records using file streams.",
+                completed: false
+            }
+        ];
+
+        // Code Snippets Presets for Playground
+        const codeSnippets = {
+            hello: `#include <stdio.h>
+
+int main() {
+    printf("Hello, CS25C01 Programming in C!\\n");
+    printf("Compiler: GCC 12.2.0 (x86_64-linux-gnu)\\n");
+    return 0;
+}`,
+            pointers: `#include <stdio.h>
+
+void updateValue(int *val) {
+    *val += 50;
+}
+
+int main() {
+    int original = 25;
+    printf("Before update: %d\\n", original);
+    
+    updateValue(&original);
+    
+    printf("After pointer update: %d\\n", original);
+    return 0;
+}`,
+            malloc: `#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n = 4;
+    int *arr = (int*) malloc(n * sizeof(int));
+    
+    for(int i = 0; i < n; i++) {
+        arr[i] = (i + 1) * 25;
+        printf("Allocated block %d: %d\\n", i, arr[i]);
+    }
+    
+    free(arr);
+    printf("Memory successfully freed.\\n");
+    return 0;
+}`,
+            structs: `#include <stdio.h>
+#include <string.h>
+
+struct Student {
+    char name[50];
+    int rollNo;
+    float cgpa;
+};
+
+int main() {
+    struct Student s1;
+    strcpy(s1.name, "John Scholar");
+    s1.rollNo = 104;
+    s1.cgpa = 3.85;
+    
+    printf("Student Record:\\n");
+    printf("Name: %s\\nRoll No: %d\\nCGPA: %.2f\\n", s1.name, s1.rollNo, s1.cgpa);
+    return 0;
+}`
+        };
+
+        // Quiz Questions Data
+        const quizQuestions = [
+            {
+                question: "Which keyword is used to dynamically allocate memory in C without initializing the allocated bytes?",
+                options: ["calloc()", "malloc()", "alloc()", "realloc()"],
+                answer: 1
+            },
+            {
+                question: "What is the correct syntax for declaring a pointer to an integer variable `x`?",
+                options: ["int x;", "int *ptr;", "ptr int*;", "address int x;"],
+                answer: 1
+            },
+            {
+                question: "Which of the following functions is used to release dynamically allocated memory back to the system?",
+                options: ["delete()", "free()", "dealloc()", "clear()"],
+                answer: 1
+            },
+            {
+                question: "What is the output format specifier used to print a pointer memory address in `printf()`?",
+                options: ["%d", "%f", "%p", "%x"],
+                answer: 2
+            },
+            {
+                question: "In C, what is the size of a pointer variable on a standard 64-bit architecture?",
+                options: ["2 bytes", "4 bytes", "8 bytes", "Depends on the pointed data type"],
+                answer: 2
+            }
+        ];
+
+        let currentTab = 'dashboard';
+        let currentModuleIndex = 0;
+        let currentQuizIndex = 0;
+        let userAnswers = {};
+
+        // Robust Tab Switching Logic
+        function switchTab(tabId) {
+            currentTab = tabId;
+            const tabs = ['dashboard', 'modules', 'playground', 'labs', 'quiz'];
+            
+            tabs.forEach(t => {
+                const section = document.getElementById(`tab-${t}`);
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (section && navBtn) {
+                    if (t === tabId) {
+                        section.classList.remove('hidden');
+                        navBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/20";
+                    } else {
+                        section.classList.add('hidden');
+                        navBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-900";
+                    }
+                }
+            });
+
+            // Update Header Title
+            const titles = {
+                dashboard: "Dashboard Overview",
+                modules: "Course Modules & Syllabus",
+                playground: "C Code Playground & Sandbox",
+                labs: "Practical Lab Assignments",
+                quiz: "Assessments & Quizzes"
+            };
+            if (document.getElementById('header-title')) {
+                document.getElementById('header-title').innerText = titles[tabId] || "Learning Portal";
+            }
+
+            if (tabId === 'modules') {
+                renderModuleList();
+                selectModule(currentModuleIndex);
+            } else if (tabId === 'labs') {
+                renderLabsList();
+            } else if (tabId === 'quiz') {
+                renderQuiz();
+            } else if (tabId === 'playground') {
+                const editor = document.getElementById('code-editor');
+                if (editor && !editor.value) {
+                    loadPresetSnippet('hello');
+                }
+            }
+        }
+
+        // Render Module Navigation List
+        function renderModuleList() {
+            const listEl = document.getElementById('module-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+            modulesData.forEach((mod, index) => {
+                const isActive = index === currentModuleIndex;
+                let badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                if (mod.badge === 'In Progress') badgeClass = "bg-indigo-500/20 text-indigo-300 border-indigo-500/30 animate-pulse";
+                if (mod.badge === 'Locked') badgeClass = "bg-slate-800 text-slate-500 border-slate-700";
+
+                const btn = document.createElement('div');
+                btn.className = `p-3.5 rounded-xl border transition cursor-pointer flex flex-col space-y-1.5 ${isActive ? 'bg-indigo-950/60 border-indigo-500/60 shadow-md' : 'bg-slate-900/40 border-slate-700/60 hover:border-slate-600'}`;
+                btn.onclick = () => selectModule(index);
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-white truncate pr-2">${mod.title}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${badgeClass}">${mod.badge}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 line-clamp-1">${mod.summary}</p>
+                `;
+                listEl.appendChild(btn);
+            });
+        }
+
+        function selectModule(index) {
+            currentModuleIndex = index;
+            renderModuleList();
+            const container = document.getElementById('module-content-container');
+            if (container && modulesData[index]) {
+                container.innerHTML = modulesData[index].content;
+            }
+        }
+
+        // Render Lab Assignments List
+        function renderLabsList() {
+            const container = document.getElementById('lab-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+            labsData.forEach(lab => {
+                const isCompleted = lab.completed;
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-2xl bg-slate-900/60 border border-slate-700/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4";
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-lg ${isCompleted ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'} flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid ${isCompleted ? 'fa-check' : 'fa-clock'}"></i>
+                            </span>
+                            <h4 class="font-bold text-white text-base">${lab.title}</h4>
+                        </div>
+                        <p class="text-xs text-slate-300 pl-11">${lab.description}</p>
+                    </div>
+                    <div class="flex items-center space-x-3 self-end md:self-center">
+                        <span class="text-xs px-3 py-1 rounded-full border ${isCompleted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-300 border-amber-500/20'} font-medium">
+                            ${lab.status}
+                        </span>
+                        <button onclick="switchTab('playground'); loadPresetSnippet('malloc');" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-xl font-medium transition shadow">
+                            ${isCompleted ? 'View Code' : 'Start Lab'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Copy Code Snippet Handler
+        function copyCodeSnippet(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showNotification("Code snippet copied to clipboard!");
+            } catch (err) {
+                showNotification("Failed to copy code.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Playground Preset Loader
+        function loadPresetSnippet(key) {
+            if (codeSnippets[key]) {
+                const editor = document.getElementById('code-editor');
+                if (editor) {
+                    editor.value = codeSnippets[key];
+                }
+            }
+        }
+
+        function resetCode() {
+            const select = document.getElementById('code-snippet-select');
+            if (select) {
+                loadPresetSnippet(select.value);
+            }
+            showNotification("Code editor reset.");
+        }
+
+        function clearTerminal() {
+            const term = document.getElementById('terminal-output');
+            if (term) {
+                term.innerText = "Terminal cleared.\n";
+            }
+        }
+
+        // Simulated GCC Compiler Execution
+        function runCCompiler() {
+            const editor = document.getElementById('code-editor');
+            const terminal = document.getElementById('terminal-output');
+            if (!editor || !terminal) return;
+
+            const code = editor.value;
+            terminal.innerText = "Compiling source code with gcc -Wall -O2...\n";
+            
+            setTimeout(() => {
+                let output = "";
+                if (code.includes("printf") || code.includes("malloc") || code.includes("updateValue")) {
+                    output = "Compilation successful (0 errors, 0 warnings).\nExecuting binary './a.out':\n\n";
+                    if (code.includes("Hello")) {
+                        output += "Hello, CS25C01 Programming in C!\nCompiler: GCC 12.2.0 (x86_64-linux-gnu)\n";
+                    } else if (code.includes("updateValue")) {
+                        output += "Before update: 25\nAfter pointer update: 75\n";
+                    } else if (code.includes("malloc")) {
+                        output += "Allocated block 0: 25\nAllocated block 1: 50\nAllocated block 2: 75\nAllocated block 3: 100\nMemory successfully freed.\n";
+                    } else if (code.includes("Student")) {
+                        output += "Student Record:\nName: John Scholar\nRoll No: 104\nCGPA: 3.85\n";
+                    } else {
+                        output += "Program executed successfully with exit code 0.\n";
+                    }
+                } else {
+                    output += "error: expected ';' before 'return'\ncompilation terminated due to syntax error.\n";
+                }
+                terminal.innerText = output;
+                showNotification("Compilation and execution completed.");
+            }, 600);
+        }
+
+        // Quiz Logic
+        function renderQuiz() {
+            const q = quizQuestions[currentQuizIndex];
+            if (!q) return;
+
+            const qNumEl = document.getElementById('current-q-num');
+            const totalNumEl = document.getElementById('total-q-num');
+            if (qNumEl) qNumEl.innerText = currentQuizIndex + 1;
+            if (totalNumEl) totalNumEl.innerText = quizQuestions.length;
+
+            const container = document.getElementById('quiz-container');
+            if (!container) return;
+
+            let optionsHTML = '';
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswers[currentQuizIndex] === idx;
+                optionsHTML += `
+                    <label class="flex items-center space-x-3 p-4 rounded-xl border transition cursor-pointer ${isSelected ? 'bg-indigo-950/60 border-indigo-500 text-white' : 'bg-slate-900/60 border-slate-700/60 text-slate-300 hover:border-slate-600'}">
+                        <input type="radio" name="quiz-opt" value="${idx}" ${isSelected ? 'checked' : ''} onclick="selectQuizAnswer(${idx})" class="text-indigo-600 focus:ring-indigo-500 h-4 w-4">
+                        <span class="text-sm font-medium">${opt}</span>
+                    </label>
+                `;
+            });
+
+            container.innerHTML = `
+                <h4 class="text-base font-bold text-white leading-relaxed">${q.question}</h4>
+                <div class="space-y-3 mt-4">${optionsHTML}</div>
+            `;
+
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            if (prevBtn) prevBtn.disabled = currentQuizIndex === 0;
+            if (nextBtn) nextBtn.innerText = currentQuizIndex === quizQuestions.length - 1 ? 'Submit Quiz' : 'Next Question';
+        }
+
+        function selectQuizAnswer(idx) {
+            userAnswers[currentQuizIndex] = idx;
+            renderQuiz();
+        }
+
+        function nextQuestion() {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                let score = 0;
+                quizQuestions.forEach((q, idx) => {
+                    if (userAnswers[idx] === q.answer) score++;
+                });
+                const percentage = (score / quizQuestions.length) * 100;
+                const container = document.getElementById('quiz-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 space-y-4">
+                            <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto shadow-lg">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">Quiz Submitted Successfully!</h3>
+                            <p class="text-slate-300 text-sm">You scored <span class="font-bold text-emerald-400">${score} / ${quizQuestions.length}</span> (${percentage}%)</p>
+                            <button onclick="currentQuizIndex=0; userAnswers={}; renderQuiz(); document.getElementById('quiz-controls').style.display='flex';" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl text-xs font-semibold transition">Retake Quiz</button>
+                        </div>
+                    `;
+                }
+                const controls = document.getElementById('quiz-controls');
+                if (controls) controls.style.display = 'none';
+                showNotification(`Quiz completed with ${percentage}% score.`);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuizIndex > 0) {
+                currentQuizIndex--;
+                renderQuiz();
+            }
+        }
+
+        // Notification Toast Handler
+        function showNotification(message) {
+            const toast = document.getElementById('notification-toast');
+            const msgEl = document.getElementById('toast-message');
+            if (!toast || !msgEl) return;
+            msgEl.innerText = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            switchTab('dashboard');
+        };
+    </script>
+</body>
+</html>
